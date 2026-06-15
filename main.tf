@@ -1,6 +1,6 @@
 module "regions" {
   source  = "Azure/avm-utl-regions/azurerm"
-  version = "0.5.0"
+  version = "0.12.0"
 }
 
 resource "random_string" "unique_name" {
@@ -12,7 +12,7 @@ resource "random_string" "unique_name" {
 
 module "resource_group" {
   source   = "Azure/avm-res-resources-resourcegroup/azurerm"
-  version  = "0.2.1"
+  version  = "0.4.0"
   name     = var.resource_group_name
   location = var.location
   tags     = var.tags
@@ -20,7 +20,7 @@ module "resource_group" {
 
 module "log_analytics_workspace" {
   source  = "Azure/avm-res-operationalinsights-workspace/azurerm"
-  version = "0.4.2"
+  version = "0.5.1"
 
   name                = local.resource_names.log_analytics_workspace_name
   location            = var.location
@@ -30,7 +30,7 @@ module "log_analytics_workspace" {
 
 module "avm-utl-network-ip-addresses" {
   source  = "Azure/avm-utl-network-ip-addresses/azurerm"
-  version = "0.1.0"
+  version = "0.1.1"
 
   address_space    = var.address_space
   address_prefixes = { for key, value in var.subnets : key => value.size }
@@ -38,28 +38,28 @@ module "avm-utl-network-ip-addresses" {
 
 module "virtual_network" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version = "0.8.1"
+  version = "0.18.0"
 
-  resource_group_name = module.resource_group.name
-  subnets             = local.subnets
-  address_space       = [var.address_space]
-  location            = var.location
-  name                = local.resource_names.virtual_network_name
+  parent_id = module.resource_group.resource_id
+  subnets   = local.subnets
+  address_space = [var.address_space]
+  location  = var.location
+  name      = local.resource_names.virtual_network_name
   diagnostic_settings = local.diagnostic_settings
-  tags                = var.tags
+  tags      = var.tags
 }
 
 module "private_dns_zone_storage_account" {
   source  = "Azure/avm-res-network-privatednszone/azurerm"
-  version = "0.3.2"
+  version = "0.5.0"
 
-  resource_group_name = module.resource_group.name
-  domain_name         = "privatelink.blob.core.windows.net"
+  parent_id   = module.resource_group.resource_id
+  domain_name = "privatelink.blob.core.windows.net"
 
   virtual_network_links = {
     vnetlink1 = {
-      vnetlinkname = "storage-account"
-      vnetid       = module.virtual_network.resource_id
+      name             = "storage-account"
+      virtual_network_id = module.virtual_network.resource_id
     }
   }
 
@@ -68,12 +68,12 @@ module "private_dns_zone_storage_account" {
 
 module "storage_account" {
   source  = "Azure/avm-res-storage-storageaccount/azurerm"
-  version = "0.5.0"
+  version = "0.7.2"
 
   account_replication_type          = "LRS"
   location                          = var.location
   name                              = local.resource_names.storage_account_name
-  resource_group_name               = module.resource_group.name
+  parent_id                         = module.resource_group.resource_id
   infrastructure_encryption_enabled = true
 
   managed_identities = {
@@ -89,8 +89,8 @@ module "storage_account" {
 
   containers = {
     demo = {
-      name                  = "demo"
-      container_access_type = "private"
+      name           = "demo"
+      public_access  = "None"
     }
   }
 
