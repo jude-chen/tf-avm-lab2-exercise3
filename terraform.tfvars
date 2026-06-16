@@ -1,11 +1,15 @@
+vnet_name     = "vnet-demo-dev-swedencentral-001"
 address_space = "10.0.0.0/22"
+
 subnets = {
-  private_endpoints = {
-    size = 28
-    # has_nat_gateway            = false
-    # has_network_security_group = true
+  subnet1 = {
+    name             = "private_endpoints_subnet"
+    address_prefixes = ["10.0.0.0/28"]
   }
 }
+
+storage_account_name = "stodemodevswedenc93847"
+
 tags = {
   env   = "AVM Lab"
   dept  = "Skillable"
