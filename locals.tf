@@ -35,4 +35,37 @@ locals {
       workspace_resource_id = module.log_analytics_workspace.resource_id
     }
   }
+
+  # Storage account scope supports metrics only (logs are rejected at this scope).
+  diagnostic_settings_storage_account = {
+    sendToLogAnalytics = {
+      name                  = "sendToLogAnalytics"
+      workspace_resource_id = module.log_analytics_workspace.resource_id
+      metrics = [
+        {
+          category = "AllMetrics"
+          enabled  = true
+        }
+      ]
+    }
+  }
+
+  diagnostic_settings_blob = {
+    sendToLogAnalytics = {
+      name                  = "sendToLogAnalytics"
+      workspace_resource_id = module.log_analytics_workspace.resource_id
+      logs = [
+        {
+          category_group = "allLogs"
+          enabled        = true
+        }
+      ]
+      metrics = [
+        {
+          category = "AllMetrics"
+          enabled  = true
+        }
+      ]
+    }
+  }
 }
