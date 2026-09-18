@@ -4,18 +4,6 @@ variable "location" {
   description = "The region to deploy the resources to"
 }
 
-variable "resource_group_name" {
-  type        = string
-  default     = "rg-demo-dev-swedencentral-001"
-  description = "The name of the resource group for the Storage Account and App Configuration which will contain the terraform backend and exported values"
-}
-
-# variable "storage_account_name_prefix" {
-#   type        = string
-#   default     = "stdemodevswe001"
-#   description = "The name of the storage account to use for the backend"
-# }
-
 variable "tags" {
   type = map(string)
   default = {
@@ -81,15 +69,10 @@ variable "resource_name_templates" {
   type        = map(string)
   description = "A map of resource names to use"
   default = {
-    resource_group_name                 = "rg-$${workload}-$${environment}-$${location}-$${sequence}"
-    log_analytics_workspace_name        = "law-$${workload}-$${environment}-$${location}-$${sequence}"
-    virtual_network_name                = "vnet-$${workload}-$${environment}-$${location}-$${sequence}"
-    network_security_group_name         = "nsg-$${workload}-$${environment}-$${location}-$${sequence}"
-    nat_gateway_name                    = "nat-$${workload}-$${environment}-$${location}-$${sequence}"
-    nat_gateway_public_ip_name          = "pip-nat-$${workload}-$${environment}-$${location}-$${sequence}"
-    key_vault_name                      = "kv$${workload}$${environment}$${location_short}$${sequence}$${uniqueness}"
-    storage_account_name                = "sto$${workload}$${environment}$${location_short}$${sequence}$${uniqueness}"
-    user_assigned_managed_identity_name = "uami-$${workload}-$${environment}-$${location}-$${sequence}"
+    resource_group_name          = "rg-$${workload}-$${environment}-$${location}-$${sequence}"
+    log_analytics_workspace_name = "law-$${workload}-$${environment}-$${location}-$${sequence}"
+    virtual_network_name         = "vnet-$${workload}-$${environment}-$${location}-$${sequence}"
+    storage_account_name         = "sto$${workload}$${environment}$${location_short}$${sequence}$${uniqueness}"
   }
 }
 
@@ -101,8 +84,6 @@ variable "address_space" {
 variable "subnets" {
   type = map(object({
     size = number
-    # has_nat_gateway            = bool
-    # has_network_security_group = bool
   }))
   description = "The subnets"
 }

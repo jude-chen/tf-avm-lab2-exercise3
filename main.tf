@@ -13,7 +13,7 @@ resource "random_string" "unique_name" {
 module "resource_group" {
   source   = "Azure/avm-res-resources-resourcegroup/azurerm"
   version  = "0.4.0"
-  name     = var.resource_group_name
+  name     = local.resource_names.resource_group_name
   location = var.location
   tags     = var.tags
 }
@@ -25,6 +25,7 @@ module "log_analytics_workspace" {
   name                = local.resource_names.log_analytics_workspace_name
   location            = var.location
   resource_group_name = module.resource_group.name
+  diagnostic_settings = local.diagnostic_settings
   tags                = var.tags
 }
 
@@ -38,7 +39,7 @@ module "avm-utl-network-ip-addresses" {
 
 module "virtual_network" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version = "0.18.0"
+  version = "0.22.2"
 
   parent_id           = module.resource_group.resource_id
   subnets             = local.subnets
@@ -68,24 +69,13 @@ module "private_dns_zone_storage_account" {
 
 module "storage_account" {
   source  = "Azure/avm-res-storage-storageaccount/azurerm"
-  version = "0.7.2"
+  version = "0.10.0"
 
   account_replication_type          = "LRS"
   location                          = var.location
   name                              = local.resource_names.storage_account_name
   parent_id                         = module.resource_group.resource_id
   infrastructure_encryption_enabled = true
-
-  managed_identities = {
-    system_assigned = true
-    # user_assigned_resource_ids = [module.user_assigned_managed_identity.resource_id]
-  }
-
-  #   customer_managed_key = {
-  #     key_vault_resource_id  = module.key_vault.resource_id
-  #     key_name               = reverse(split("/", module.key_vault.keys_resource_ids["cmk_for_storage_account"].versionless_id))[0]
-  #     user_assigned_identity = { resource_id = module.user_assigned_managed_identity.resource_id }
-  #   }
 
   containers = {
     demo = {
