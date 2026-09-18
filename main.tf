@@ -8,7 +8,7 @@ module "resource_group" {
 
 module "virtual_network" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version = "0.18.0"
+  version = "0.22.2"
 
   parent_id     = module.resource_group.resource_id
   subnets       = var.subnets
@@ -37,7 +37,7 @@ module "private_dns_zone_storage_account" {
 
 module "storage_account" {
   source  = "Azure/avm-res-storage-storageaccount/azurerm"
-  version = "0.7.2"
+  version = "0.10.0"
 
   account_replication_type          = "LRS"
   location                          = var.location
